@@ -49,7 +49,7 @@ h2 {
     flex-direction: column;
 }
 
-#training-button {
+#training-button, #select-all, #deselect-all, #select-hc {
     color: white;
     border: none;
     margin: 20px auto;

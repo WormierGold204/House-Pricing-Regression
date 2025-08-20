@@ -16,10 +16,11 @@ def home():
 def train():
     # Handle a POST request to train a model
     if request.method == "POST":
-        # Get the regression type, model name, and selected features from the form
-        regression_type = request.form.get("model_type")
-        model_name = request.form.get("model_name")
-        selected_features = request.form.getlist("features")  # list of checked features
+        # Get the regression type, model name, and selected features from the AJAX request
+        data = request.get_json()
+        regression_type = data.get("model_type")
+        model_name = data.get("model_name")
+        selected_features = data.get("features", [])
 
         # Validate the input
         if not regression_type or not model_name or not selected_features:
