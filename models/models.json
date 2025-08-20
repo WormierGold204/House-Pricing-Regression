@@ -1,0 +1,31 @@
+[
+    {
+        "name": "prova",
+        "type": "gradient_boosting",
+        "features": [
+            "OverallQual"
+        ],
+        "rmse": 46400.193511714206,
+        "r2": 0.7193107698721892,
+        "file": "models/prova.pkl"
+    },
+    {
+        "name": "prova2",
+        "type": "random_forest",
+        "features": [
+            "Neighborhood",
+            "HouseStyle",
+            "OverallQual",
+            "YearBuilt",
+            "RoofStyle",
+            "ExterQual",
+            "GrLivArea",
+            "GarageCars",
+            "GarageQual",
+            "PoolQC"
+        ],
+        "rmse": 32253.305148145395,
+        "r2": 0.8643766034351134,
+        "file": "models/prova2.pkl"
+    }
+]
