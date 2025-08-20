@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Regression Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>House Price Prediction</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('') }}">Home</a></li>
+                <li><a href="{{ url_for('train') }}">Training</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div>
+            <h2>Choose a Model between those available</h2>
+
+        </div>
+        <div>
+        <h2>Make a Prediction</h2>
+            <form id="prediction-form">
+                <!-- Add form fields for input data here -->
+                <label for="feature1">Feature 1:</label>
+                <input type="text" id="feature1" name="feature1" required>
+
+                <label for="feature2">Feature 2:</label>
+                <input type="text" id="feature2" name="feature2" required>
+
+                <!-- Add more fields as necessary -->
+
+                <button type="submit">Predict</button>
+            </form>
+        </div>
+
+        <div id="prediction-result"></div>
+    </main>
+</body>
+</html>

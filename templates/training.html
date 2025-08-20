@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Regression Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>House Price Training</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('prediction') }}">Prediction</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Train your Model</h2>
+        <div id="training-section">
+            <form id="training-form" method="POST">
+                <div id="form-section">
+                    <div class="name-container">
+                        <label for="model-name">Model Name:</label>
+                        <input type="text" id="model-name" name="model_name" placeholder="Enter model name" required>
+
+                        <label for="model-type">Model Type:</label>
+                        <select id="model-type" name="model_type" required>
+                            <option value="linear_regression">Linear Regression</option>
+                            <option value="gradient_boost">Gradient Boost</option>
+                            <option value="random_forest">Random Forest</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-container">
+                        <label for="training-data">Check the features you want to train the model on:</label>
+                        {% for feature in features %}
+                            <div>
+                                <input type="checkbox" id="{{ feature }}" name="features" value="{{ feature }}">
+                                <label for="{{ feature }}">{{ feature }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" id="training-button">Train Model</button>
+            </form>
+
+            <p id="training-result">Here will be the results</p>
+        </div>
+    </main>
+</body>
+</html>
