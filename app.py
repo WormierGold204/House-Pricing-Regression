@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from dataset_manager import DatasetManager
 from training_manager import TrainingManager
+import json, os
 
 app = Flask(__name__)
 dataset = DatasetManager()
@@ -47,9 +48,17 @@ def train():
     features = dataset.get_features()
     return render_template("training.html", features=features)
 
+# Route to display the prediction page
 @app.route('/prediction')
 def prediction():
     return render_template('prediction.html')
+
+# Route to get the list of trained models
+@app.route('/models', methods=["GET"])
+def models():
+    with open("models/models.json", "r") as f:
+        models = json.load(f)
+    return jsonify(models)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
