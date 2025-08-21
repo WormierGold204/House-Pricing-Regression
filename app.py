@@ -11,6 +11,11 @@ training_manager = TrainingManager(dataset)
 def home():
     return render_template('index.html')
 
+# Route to display the EDA page
+@app.route('/eda', methods=["GET"])
+def eda():
+    return render_template('eda.html', statistics=dataset.statistics)
+
 # Route to display the training page
 @app.route("/train", methods=["GET", "POST"])
 def train():

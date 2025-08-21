@@ -1,3 +1,4 @@
+// Script for training page
 document.addEventListener("DOMContentLoaded", function() {
     // AJAX request to train the model with given parameters
     document.querySelector("#training-button").addEventListener("click", async function(event) {

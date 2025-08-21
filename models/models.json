@@ -116,5 +116,24 @@
         "rmse": 28428.973895520183,
         "r2": 0.8946320488957986,
         "file": "models/prova3.pkl"
+    },
+    {
+        "name": "prova4",
+        "type": "gradient_boosting",
+        "features": [
+            "MSSubClass",
+            "Neighborhood",
+            "OverallQual",
+            "OverallCond",
+            "YearBuilt",
+            "Exterior1st",
+            "BsmtExposure",
+            "TotalBsmtSF",
+            "GrLivArea",
+            "GarageCars"
+        ],
+        "rmse": 25039.628587666564,
+        "r2": 0.9182586264426664,
+        "file": "models/prova4.pkl"
     }
 ]

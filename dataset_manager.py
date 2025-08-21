@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
+from eda import target_variable_distribution, correlation_heatmap, plots, dataset_statistics
 
 class DatasetManager:
     def __init__(self, path="data/dataset.csv"):
@@ -20,6 +21,16 @@ class DatasetManager:
         self.df[numeric_features] = imputer_num.fit_transform(self.df[numeric_features])
         self.df[categorical_features] = imputer_cat.fit_transform(self.df[categorical_features])
 
+        # Compute basic statistics of the dataset
+        self.statistics = dataset_statistics(self.df)
+
+        # Generate analysis' images for EDA
+        self.images_paths = {
+            "target_distribution": target_variable_distribution(self.df),
+            "correlation_heatmap": correlation_heatmap(self.df),
+            "plots": plots(self.df)
+        }
+
     def get_features(self):
         """Return all features except target column"""
         # Target column is assumed to be the last one
@@ -28,6 +39,8 @@ class DatasetManager:
     def get_target(self):
         """Return the target column name"""
         return self.df.columns[-1]
+
+    
 
     def training_preprocessing(self):
         """ Preprocess the dataset for training """

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploratory Data Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Exploratory Data Analysis</h1>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('prediction') }}">Prediction</a></li>
+                <li><a href="{{ url_for('train')}}">Training</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="eda-main">
+        <h2>Dataset Overview</h2>
+        <div id="info-navigator">
+            <a href="#summary">Summary</a>
+            <a href="#target">Target Variable</a>
+            <a href="#correlations">Correlations</a>
+            <a href="#plots">Plots</a>
+        </div>
+        <div class="info-container">
+            <div id="summary" class="eda-section">
+                <h2>Data Summary</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item">Number of Rows: <b>{{ statistics.n_rows }}</b></li>
+                    <li class="list-group-item">Number of Columns: <b>{{ statistics.n_cols }}</b></li>
+                    <li class="list-group-item">Target Variable: <b>{{ statistics.target }}</b></li>
+                </ul>
+
+                <h3 class="mt-4">Descriptive Statistics</h3>
+                <div class="table-responsive">
+                    {{ statistics.describe|safe }}
+                </div>
+            </div>
+
+            <div id="target" class="eda-section">
+                <h2>Target Variable</h2>
+                <img src="{{ url_for('static', filename='eda/target_distribution.png') }}" alt="Target Variable Distribution">
+                <p>Distribution of the target variable (House Price).</p>
+            </div>
+
+            <div id="correlations" class="eda-section">
+                <h2>Correlations</h2>
+                <img src="{{ url_for('static', filename='eda/correlation_heatmap.png') }}" alt="Correlation Heatmap">
+                <p>Correlation heatmap showing relationships between features.</p>
+                <p>Features with high correlation to the target variable are highlighted.</p>
+            </div>
+
+            <div id="plots" class="eda-section">
+                <h2>Plots</h2>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_living_area.png') }}" alt="Sale Price vs Living Area">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_overall_quality.png') }}" alt="Sale Price vs Overall Quality">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_total_basement_area.png') }}" alt="Sale Price vs Total Basament Area">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_garage_cars.png') }}" alt="Sale Price vs Garage Cars">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_neighborhood.png') }}" alt="Sale Price vs Neighborhood">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_building_class.png') }}" alt="Sale Price vs Building Class">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_house_style.png') }}" alt="Sale Price vs House Style">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_roof_style.png') }}" alt="Sale Price vs Roof Style">
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
