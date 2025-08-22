@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Regression Models</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/models_style.css') }}">
+    <script src="{{ url_for('static', filename = 'js/models_script.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to the House Price Regression App</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('train') }}">Training</a></li>
+                <li><a href="{{ url_for('prediction') }}">Prediction</a></li>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('eda') }}">EDA</a></li>
+            </ul>
+        </nav>
+    </header>
+    <body>
+        <h1>List of Models</h1>
+        <div id="models-container"></div>
+        <p>Left click on a model to show information about the model</p>
+        <p>Right click on a model to delete it</p>
+    </body>
+</html>

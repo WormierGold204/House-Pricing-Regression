@@ -58,8 +58,20 @@ def prediction():
 def models():
     return jsonify(training_manager.get_models()), 200
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+# Route to display a page to view all the trained model
+@app.route('/view_models')
+def view_models():
+    return render_template('models.html')
+
+# Route to delete the model indicated by the user
+@app.route('/view_models/<model_name>', methods=["DELETE"])
+def delete_models(model_name):
+    try:
+        # Remove information of the model from the json file and delete the .pkl file
+        training_manager.delete_model(model_name)
+        return jsonify({"status": "success", "message": f"Model {model_name} deleted"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 # Route to perform predictions
 @app.route('/predict', methods=["POST"])
@@ -79,3 +91,6 @@ def predict():
         return jsonify({"prediction": prediction}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

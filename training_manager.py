@@ -39,23 +39,42 @@ class TrainingManager:
         # Return the loaded model
         return joblib.load(model_path)
 
-    def update_metadata(self, metadata):
+    def update_metadata(self, metadata, delete = False):
         """Update the models.json file with new model metadata."""
-        json_path = os.path.join('models', "models.json")
-
         # Load existing metadata to avoid overwriting
-        models = []
-        if os.path.exists(json_path):
-            with open(json_path, "r") as f:
-                models = json.load(f)
+        models = self.get_models()
+
+        if delete:
+            with open("models/models.json", "w") as f:
+                json.dump(metadata, f, indent=4)
+            return
 
         # Overwrite existing model metadata if the name matches
         models = [m for m in models if m["name"] != metadata["name"]]
         models.append(metadata)
 
         # Save updated metadata
-        with open(json_path, "w") as f:
+        with open("models/models.json", "w") as f:
             json.dump(models, f, indent=4)
+
+    def delete_model(self, model_name):
+        # Get all models from the json file
+        models = self.get_models()
+
+        # Find the model indicated by user in metadata
+        model_to_delete = next((m for m in models if m["name"] == model_name), None)
+        if not model_to_delete:
+            raise ValueError("Model not found")
+
+        # Delete .pkl file of the model if it exists
+        if os.path.exists(model_to_delete["file"]):
+            os.remove(model_to_delete["file"])
+
+        # Remove information about the model from metadata list
+        models = [m for m in models if m["name"] != model_name]
+
+        # Save json file again
+        self.update_metadata(models, True)
 
     def train_model(self, model_type, model_name, selected_features):
         # Obtain preprocessed data and keep only selected features

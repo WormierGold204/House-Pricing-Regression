@@ -1,7 +1,25 @@
 [
     {
+        "name": "prova1",
+        "type": "gradient_boosting",
+        "features": [
+            "MSSubClass",
+            "Neighborhood",
+            "OverallQual",
+            "OverallCond",
+            "YearBuilt",
+            "Exterior1st",
+            "TotalBsmtSF",
+            "GrLivArea",
+            "GarageCars"
+        ],
+        "rmse": 19309.8488818279,
+        "r2": 0.9513879522503685,
+        "file": "models/prova1.pkl"
+    },
+    {
         "name": "prova",
-        "type": "linear_regression",
+        "type": "gradient_boosting",
         "features": [
             "Id",
             "MSSubClass",
@@ -84,36 +102,8 @@
             "SaleType",
             "SaleCondition"
         ],
-        "rmse": 22932.686569653946,
-        "r2": 0.9314360173092497,
+        "rmse": 15448.952151165468,
+        "r2": 0.9688839671062014,
         "file": "models/prova.pkl"
-    },
-    {
-        "name": "prova1",
-        "type": "gradient_boosting",
-        "features": [
-            "MSSubClass",
-            "Neighborhood",
-            "OverallQual",
-            "OverallCond",
-            "YearBuilt",
-            "Exterior1st",
-            "TotalBsmtSF",
-            "GrLivArea",
-            "GarageCars"
-        ],
-        "rmse": 19309.8488818279,
-        "r2": 0.9513879522503685,
-        "file": "models/prova1.pkl"
-    },
-    {
-        "name": "prova2",
-        "type": "random_forest",
-        "features": [
-            "OverallQual"
-        ],
-        "rmse": 45838.06687758584,
-        "r2": 0.7260705322929726,
-        "file": "models/prova2.pkl"
     }
 ]
