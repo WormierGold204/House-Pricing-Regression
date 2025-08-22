@@ -1,13 +1,14 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import StandardScaler
 from eda import target_variable_distribution, correlation_heatmap, plots, dataset_statistics
 
 class DatasetManager:
     def __init__(self, path="data/dataset.csv"):
         # Load dataset
         self.df = pd.read_csv(path)
+
+        # Save a copy of the original DataFrame without preprocessing
+        df_copy = self.df.copy()
 
         # Preprocess dataset, readying it for EDA
         # Separate categorical and numerical
@@ -31,6 +32,9 @@ class DatasetManager:
             "plots": plots(self.df)
         }
 
+        # Restore the original DataFrame for the pipeline
+        self.df = df_copy
+
     def get_features(self):
         """Return all features except target column"""
         # Target column is assumed to be the last one
@@ -39,49 +43,3 @@ class DatasetManager:
     def get_target(self):
         """Return the target column name"""
         return self.df.columns[-1]
-
-    
-
-    def training_preprocessing(self):
-        """ Preprocess the dataset for training """
-        # Separate categorical and numerical features
-        numeric_features = self.df.select_dtypes(include=['int64', 'float64']).columns
-        categorical_features = self.df.select_dtypes(include=['object']).columns
-
-        # Encode Categorical Variables using OneHotEncoder and handling unknown categories by ignoring them
-        encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
-        encoded = encoder.fit_transform(self.df[categorical_features])
-
-        # Convert the encoded features back to a DataFrame
-        encoded_df = pd.DataFrame(
-            encoded, 
-            columns=encoder.get_feature_names_out(categorical_features)
-        )
-
-        # Create a DataFrame with the encoded features merged with numeric ones
-        df_processed = pd.concat(
-            [self.df[numeric_features].reset_index(drop=True), encoded_df], 
-            axis=1
-        )
-
-        # Separate target variable (SalePrice) and the other features
-        y = df_processed["SalePrice"]
-        X = df_processed.drop("SalePrice", axis=1)
-
-        # Scale numeric features
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X)
-        X_scaled = pd.DataFrame(X_scaled, columns=X.columns)
-
-        # Save mapping: raw feature -> encoded columns
-        # This is needed for feature selection in the training phase
-        self.feature_map = {}
-        for feature in categorical_features:
-            self.feature_map[feature] = [
-                col for col in encoded_df.columns if col.startswith(feature + "_")
-            ]
-        for feature in numeric_features:
-            if feature != "SalePrice":
-                self.feature_map[feature] = [feature]
-
-        return X_scaled, y

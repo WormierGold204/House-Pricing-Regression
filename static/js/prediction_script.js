@@ -43,8 +43,35 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     predictButton.addEventListener('click', async () => {
         // Get the selected model
-        const selectedModelRadio = document.querySelector('input[name="model"]:checked');
+        const selectedModelRadio = document.querySelector('input[name="model"]:checked').value;
+
+        // Get the values from the input boxes
+        const inputBoxes = document.querySelectorAll('#prediction-form input[type="text"]');
+        let inputData = {};
+        inputBoxes.forEach((box) => {
+            inputData[box.name] = box.value;
+        });
         
+        // Send the data to the server for prediction
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ model_name: selectedModelRadio, features: inputData })
+        });
+
+        // Display the prediction result, clearing previous results
+        const result = await response.json();
+        const resultDiv = document.querySelector('#prediction-result');
+        let predictionText = document.createElement('p');
+        if(response.ok) {
+            predictionText.textContent = `Predicted Price: $${result.prediction.toFixed(2)}`;
+        } else {
+            predictionText.textContent = `Error: ${result.error}`;
+        }
+        resultDiv.innerHTML = '';
+        resultDiv.appendChild(predictionText);
     });
 
     // Clear the input box and info section on page load

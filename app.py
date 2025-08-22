@@ -56,9 +56,26 @@ def prediction():
 # Route to get the list of trained models
 @app.route('/models', methods=["GET"])
 def models():
-    with open("models/models.json", "r") as f:
-        models = json.load(f)
-    return jsonify(models)
+    return jsonify(training_manager.get_models()), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+# Route to perform predictions
+@app.route('/predict', methods=["POST"])
+def predict():
+    # Get the model name and features from the request
+    data = request.get_json()
+    model_name = data.get("model_name")
+    features = data.get("features", {})
+
+    # Validate the input
+    if not model_name or not features:
+        return jsonify({"error": "Model name and features are required"}), 400
+
+    # Perform prediction using the selected model
+    try:
+        prediction = training_manager.predict(model_name, features)
+        return jsonify({"prediction": prediction}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

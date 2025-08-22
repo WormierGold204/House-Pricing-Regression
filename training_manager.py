@@ -2,7 +2,13 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler
 import numpy as np
+import pandas as pd
 import joblib
 import json
 import os
@@ -10,6 +16,11 @@ import os
 class TrainingManager:
     def __init__(self, dataset_manager):
         self.dataset_manager = dataset_manager
+
+    def get_models(self):
+        """Return the list of trained models."""
+        with open("models/models.json", "r") as f:
+            return json.load(f)
 
     def save_model(self, model, model_name):
         """Save the trained model to disk."""
@@ -50,41 +61,71 @@ class TrainingManager:
         # Obtain preprocessed data and keep only selected features
         if not selected_features:
             raise ValueError("No features selected for training")
-        X, y = self.dataset_manager.training_preprocessing()
 
-        # Expand selections
-        # This is needed because OneHotEncoder creates multiple columns for categorical features and here we have only the raw feature names
-        expanded_features = []
-        for feat in selected_features:
-            expanded_features.extend(self.dataset_manager.feature_map.get(feat, []))
-        X = X[expanded_features]
+        X = self.dataset_manager.df[selected_features]
+        y = self.dataset_manager.df[self.dataset_manager.get_target()]
 
-        # Split the dataset into training and testing sets
+        # Split Categorical and Numeric Features
+        numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
+        categorical_features = X.select_dtypes(include=['object']).columns
+
+        # Preprocessing to add in the pipeline
+
+        # Preprocessing to handle missing values and scale numeric features
+        numeric_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler())
+        ])
+
+        # Preprocessing to handle missing values and encode categorical features
+        categorical_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='most_frequent')),
+            ('encoder', OneHotEncoder(handle_unknown='ignore'))
+        ])
+
+        # Create a preprocessor that applies the transformations to the respective features
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', numeric_transformer, numeric_features),
+                ('cat', categorical_transformer, categorical_features)
+            ]
+        )
+
+        # Choose the model based on the user's choice
+        if model_type == 'linear_regression':
+            model = LinearRegression()
+        elif model_type == 'gradient_boosting':
+            model = GradientBoostingRegressor(random_state=42)
+        elif model_type == 'random_forest':
+            model = RandomForestRegressor(random_state=42)
+        else:
+            raise ValueError("Unsupported model type")
+
+        # Create a pipeline that first preprocesses the data and then applies the model
+        # This allows to not worry about the order of operations
+        # and ensures that the same preprocessing is applied during training and prediction
+        pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                                ('model', model)])
+
+        # Split the data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42
         )
 
-        if model_type == 'linear_regression':
-            model = self.train_linear_regression(X_train, y_train)
-        elif model_type == 'gradient_boosting':
-            model = self.train_gradient_boosting(X_train, y_train)
-        elif model_type == 'random_forest':
-            model = self.train_random_forest(X_train, y_train)
-        else:
-            raise ValueError("Unsupported model type")
+        # Train the model based on the pipeline
+        pipeline.fit(X, y)
 
-        # Evaluate the model on the test set
-        y_pred = model.predict(X_test)
+        # Save the model
+        self.save_model(pipeline, model_name)
+
+        # Evaluate the model
+        y_pred = pipeline.predict(X_test)
 
         # Calculate evaluation metrics
-        mse = mean_squared_error(y_test, y_pred)
-        rmse = np.sqrt(mse)
+        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
         r2 = r2_score(y_test, y_pred)
 
-        # Save the trained model
-        self.save_model(model, model_name)
-
-        # Update model metadata
+        # Prepare metadata for the model and update the JSON file
         metadata = {
             "name": model_name,
             "type": model_type,
@@ -95,12 +136,7 @@ class TrainingManager:
         }
         self.update_metadata(metadata)
 
-        # Return the trained model and evaluation metrics
-        return {
-            'model': model,
-            'rmse': rmse,
-            'r2': r2,
-        }
+        return {"model": pipeline, "rmse": rmse, "r2": r2}
 
     def train_linear_regression(self, X_train, y_train):
         """Train a Linear Regression model."""
@@ -122,3 +158,15 @@ class TrainingManager:
         model = GradientBoostingRegressor(random_state=42)
         model.fit(X_train, y_train)
         return model
+
+    def predict(self, model_name, features):
+        """Make a prediction using a trained model."""
+        # Load the model
+        model = self.load_model(model_name)
+
+        # Features must be passed as a DataFrame with one row
+        X = pd.DataFrame([features])
+
+        # Take just the first element of the prediction, that is the expected prediction
+        prediction = model.predict(X)[0]
+        return prediction
