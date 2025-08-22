@@ -49,7 +49,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         const inputBoxes = document.querySelectorAll('#prediction-form input[type="text"]');
         let inputData = {};
         inputBoxes.forEach((box) => {
-            inputData[box.name] = box.value;
+            let value = box.value.trim();
+
+            // If boxes are empty, send as null
+            if (value === "") {
+                inputData[box.name] = null;
+            } else {
+                inputData[box.name] = value;
+            }
         });
         
         // Send the data to the server for prediction
@@ -72,6 +79,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         resultDiv.innerHTML = '';
         resultDiv.appendChild(predictionText);
+    });
+
+    // Add a listener to recheck the enabling of the button when the chekcbox status change
+    const acceptNanBox = document.querySelector("#accept-nan");
+    acceptNanBox.addEventListener("change", () => {
+        checkButton()
     });
 
     // Clear the input box and info section on page load
@@ -119,13 +132,14 @@ function showBox(model) {
 // Function to check if the predict button can be enabled
 function checkButton() {
     const predictButton = document.querySelector('#predict-button');
+    const acceptNanBox = document.querySelector("#accept-nan");
     const allInputs = document.querySelectorAll('#prediction-form input[type="text"]');
     
     // Check if all text input boxes are filled
     const allFilled = Array.from(allInputs).every(input => input.value.trim() !== "");
     
-    // Enable the predict button if a radio button is selected and all input boxes are filled
-    if (radioSelected && allFilled) {
+    // Enable the predict button if a radio button is selected and all input boxes are filled or the accept NaN checkbox is checked
+    if (radioSelected && (allFilled || acceptNanBox.checked)) {
         predictButton.disabled = false;
     } else {
         predictButton.disabled = true;

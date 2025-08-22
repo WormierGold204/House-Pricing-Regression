@@ -37,13 +37,15 @@
 
                     <div class="checkbox-container">
                         <label for="training-data">Check the features you want to train the model on:</label>
-                        <button id="select-all" type="button">Select All</button>
-                        <button id="deselect-all" type="button">Deselect All</button>
+                        <div>
+                            <button id="select-all" type="button">Select All</button>
+                            <button id="deselect-all" type="button">Deselect All</button>
+                        </div>
                         <button id="select-hc" type="button">Select High Correlated Features, as shown in EDA</button>
                         {% for feature in features %}
                             <div>
-                                <input type="checkbox" id="{{ feature }}" name="features" value="{{ feature }}">
                                 <label for="{{ feature }}">{{ feature }}</label>
+                                <input type="checkbox" id="{{ feature }}" name="features" value="{{ feature }}">
                             </div>
                         {% endfor %}
                     </div>

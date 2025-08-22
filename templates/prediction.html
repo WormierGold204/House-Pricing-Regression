@@ -26,6 +26,9 @@
         <div id="model-info"></div>
 
         <h2>Make a Prediction</h2>
+        <input type="checkbox" id="accept-nan">
+        <label for="accept-nan">If this box is checked, not-filled box' features will be set with median values 
+            for numerical features and most frequent values for categorical features</label>
         <div id="prediction-form"></div>
 
         <button id="predict-button">Predict</button>

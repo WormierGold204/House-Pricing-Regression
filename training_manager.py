@@ -186,6 +186,15 @@ class TrainingManager:
         # Features must be passed as a DataFrame with one row
         X = pd.DataFrame([features])
 
+        # Load metadata of current model
+        model_meta = next((m for m in self.get_models() if m["name"] == model_name), None)
+
+        # Fill non compiled features' box with NaN value
+        expected_features = model_meta["features"]
+        for f in expected_features:
+            if f not in X.columns:
+                X[f] = X.NA
+
         # Take just the first element of the prediction, that is the expected prediction
         prediction = model.predict(X)[0]
         return prediction
