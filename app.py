@@ -37,7 +37,7 @@ def train():
             model = training_manager.train_model(regression_type, model_name, selected_features)
             # Check if the model was trained successfully and return the evaluation metrics
             if model['model']:
-                return jsonify({"message": f"Model {model_name} trained successfully!\nEvaluation metrics:\nRMSE = {model['rmse']}\nR^2 = {model['r2']}"}), 200
+                return jsonify({"message": f"Model '{model_name}' trained successfully!\nEvaluation metrics:\nRMSE = {model['rmse']}\nR^2 = {model['r2']}\n You will be able to use the model in the prediction page"}), 200
             else:
                 return jsonify({"error": "Model training failed"}), 500
         except Exception as e:

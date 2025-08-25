@@ -70,15 +70,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Display the prediction result, clearing previous results
         const result = await response.json();
-        const resultDiv = document.querySelector('#prediction-result');
-        let predictionText = document.createElement('p');
+        let predictionText = document.querySelector('#prediction-result');
         if(response.ok) {
             predictionText.textContent = `Predicted Price: $${result.prediction.toFixed(2)}`;
         } else {
             predictionText.textContent = `Error: ${result.error}`;
         }
-        resultDiv.innerHTML = '';
-        resultDiv.appendChild(predictionText);
     });
 
     // Add a listener to recheck the enabling of the button when the chekcbox status change
@@ -161,7 +158,13 @@ function showInfo(model) {
 
     // Model's type
     const typePara = document.createElement('p');
-    typePara.textContent = `Model Type: ${model.type}`;
+    if (model.type === "linear_regression") {
+        typePara.textContent = `Model Type: Linear Regressor`;
+    } else if (model.type === "gradient_boosting") {
+        typePara.textContent = `Model Type: Gradient Boosting Regressor`;
+    } else if (model.type === "random_forest") {
+        typePara.textContent = `Model Type: Random Forest Regressor`;
+    }
     infoDiv.appendChild(typePara);
 
     // Model's RMSE

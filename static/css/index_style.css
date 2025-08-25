@@ -4,10 +4,14 @@ body {
     font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f8f9fa;
     color: #212529;
-    line-height: 1.6;
+    text-align: center;
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Navbar */
 .navbar {
     background-color: #0d6efd;
     padding: 1rem;
@@ -34,16 +38,6 @@ body {
     opacity: 0.85;
 }
 
-/* Container */
-.container {
-    max-width: 960px;
-    margin: 2rem auto;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Headings */
 h1, h2, h3 {
     color: #212529;
     margin-bottom: 1rem;
