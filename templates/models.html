@@ -10,11 +10,11 @@
 <body>
     <header>
         <h1>Welcome to the House Price Regression App</h1>
-        <nav>
+        <nav class="navbar">
             <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
                 <li><a href="{{ url_for('train') }}">Training</a></li>
                 <li><a href="{{ url_for('prediction') }}">Prediction</a></li>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
                 <li><a href="{{ url_for('eda') }}">EDA</a></li>
             </ul>
         </nav>
@@ -22,7 +22,5 @@
     <body>
         <h1>List of Models</h1>
         <div id="models-container"></div>
-        <p>Left click on a model to show information about the model</p>
-        <p>Right click on a model to delete it</p>
     </body>
 </html>

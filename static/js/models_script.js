@@ -15,14 +15,16 @@ async function loadModels(container) {
 
     models.forEach(model => {
         let div = document.createElement("div")
+        div.classList.add("model")
 
         // Label to display information about the model
         let model_label = document.createElement("label")
-        model_label.innerText = `Name: ${model.name}\n Type: ${model.type}; RMSE: ${model.rmse}, R^2: ${model.r2}\n Number of Features: ${model.features.length}`
+        model_label.innerText = `Name: ${model.name}\nType: ${model.type}\nRMSE: ${model.rmse}\nR^2: ${model.r2}\nNumber of Features: ${model.features.length}`
 
         // Button to delete the model
         let button = document.createElement("button")
         button.innerText = "Delete"
+        button.classList.add("delete-button")
 
         // Listener to permanently delete the model on button click
         button.addEventListener("click", async () => {

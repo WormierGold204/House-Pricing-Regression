@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exploratory Data Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/eda_style.css') }}">
 </head>
 <body>
     <h1>Exploratory Data Analysis</h1>
     <header>
-        <nav>
+        <nav class="navbar">
             <ul>
                 <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('train') }}">Training</a></li>
                 <li><a href="{{ url_for('prediction') }}">Prediction</a></li>
-                <li><a href="{{ url_for('train')}}">Training</a></li>
+                <li><a href="{{ url_for('view_models') }}">EDA</a></li>
             </ul>
         </nav>
     </header>
@@ -28,14 +29,14 @@
         <div class="info-container">
             <div id="summary" class="eda-section">
                 <h2>Data Summary</h2>
-                <ul class="list-group mb-3">
+                <ul id="data-summary">
                     <li class="list-group-item">Number of Rows: <b>{{ statistics.n_rows }}</b></li>
                     <li class="list-group-item">Number of Columns: <b>{{ statistics.n_cols }}</b></li>
                     <li class="list-group-item">Target Variable: <b>{{ statistics.target }}</b></li>
                 </ul>
 
                 <h3 class="mt-4">Descriptive Statistics</h3>
-                <div class="table-responsive">
+                <div id="table-section">
                     {{ statistics.describe|safe }}
                 </div>
             </div>
@@ -49,12 +50,13 @@
             <div id="correlations" class="eda-section">
                 <h2>Correlations</h2>
                 <img src="{{ url_for('static', filename='eda/correlation_heatmap.png') }}" alt="Correlation Heatmap">
-                <p>Correlation heatmap showing relationships between features.</p>
-                <p>Features with high correlation to the target variable are highlighted.</p>
+                <p>Pearson correlation heatmap showing linear relationship between features.</p>
+                <p>Last column (or last row) show the correlation between the target variable and the other features.</p>
             </div>
 
             <div id="plots" class="eda-section">
                 <h2>Plots</h2>
+                <h3>Plots for numerical features</h3>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_living_area.png') }}" alt="Sale Price vs Living Area">
                 </div>
@@ -67,6 +69,7 @@
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_garage_cars.png') }}" alt="Sale Price vs Garage Cars">
                 </div>
+                <h3>Plots for categorical features</h3>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_neighborhood.png') }}" alt="Sale Price vs Neighborhood">
                 </div>

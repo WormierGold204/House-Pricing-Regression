@@ -63,7 +63,7 @@ h2 {
     max-width: 1000px;
     margin: 10 auto;
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: white;
     display: flex;
     flex-direction: column;
 }
