@@ -7,6 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import GridSearchCV
 import numpy as np
 import pandas as pd
 import joblib
@@ -113,18 +114,44 @@ class TrainingManager:
         # Choose the model based on the user's choice
         if model_type == 'linear_regression':
             model = LinearRegression()
-        elif model_type == 'gradient_boosting':
+        elif model_type == 'gradient_boosting' or 'gradient_boosting_tuned':
             model = GradientBoostingRegressor(random_state=42)
         elif model_type == 'random_forest':
-            model = RandomForestRegressor(random_state=42)
+            model = RandomForestRegressor(random_state=42) or 'random_forest_tuned'
         else:
             raise ValueError("Unsupported model type")
 
-        # Create a pipeline that first preprocesses the data and then applies the model
-        # This allows to not worry about the order of operations
-        # and ensures that the same preprocessing is applied during training and prediction
-        pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+        # If the user selected a tuned model, set up GridSearchCV with hyperparameters for tuning
+        if model_type == 'gradient_boosting_tuned':
+            pipeline = Pipeline(steps=[('preprocessor', preprocessor),
                                 ('model', model)])
+
+            # Define the hyperparameter grid for tuning
+            param_grid = {
+                'model__n_estimators': [100, 300],
+                'model__learning_rate': [0.01, 0.1, 0.2],
+                'model__max_depth': [2, 5]
+            }
+
+            # Optimize the pipeline, searching for the best hyperparameters
+            processed_model = GridSearchCV(pipeline, param_grid, cv=3, n_jobs=-1, scoring='neg_mean_squared_error')
+        elif model_type == 'random_forest_tuned':
+            pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                                ('model', model)])
+
+            param_grid = {
+                'model__n_estimators': [100, 200],
+                'model__max_depth': [None, 10, 20],
+                'model__min_samples_split': [2, 5]
+            }
+
+            processed_model = GridSearchCV(pipeline, param_grid, cv=3, n_jobs=-1, scoring='neg_mean_squared_error')
+        else:
+            # Create a pipeline that first preprocesses the data and then applies the model (for tuned model this is done before the the tuning)
+            # This allows not to worry about the order of operations
+            # and ensures that the same preprocessing is applied during training and prediction
+            processed_model = Pipeline(steps=[('preprocessor', preprocessor),
+                                    ('model', model)])
 
         # Split the data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(
@@ -132,13 +159,13 @@ class TrainingManager:
         )
 
         # Train the model based on the pipeline
-        pipeline.fit(X, y)
+        processed_model.fit(X, y)
 
         # Save the model
-        self.save_model(pipeline, model_name)
+        self.save_model(processed_model, model_name)
 
         # Evaluate the model
-        y_pred = pipeline.predict(X_test)
+        y_pred = processed_model.predict(X_test)
 
         # Calculate evaluation metrics
         rmse = np.sqrt(mean_squared_error(y_test, y_pred))
@@ -155,7 +182,7 @@ class TrainingManager:
         }
         self.update_metadata(metadata)
 
-        return {"model": pipeline, "rmse": rmse, "r2": r2}
+        return {"model": processed_model, "rmse": rmse, "r2": r2}
 
     def train_linear_regression(self, X_train, y_train):
         """Train a Linear Regression model."""

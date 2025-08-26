@@ -164,6 +164,12 @@ function showInfo(model) {
         typePara.textContent = `Model Type: Gradient Boosting Regressor`;
     } else if (model.type === "random_forest") {
         typePara.textContent = `Model Type: Random Forest Regressor`;
+    } else if (model.type === "gradient_boosting_tuned") {
+        typePara.textContent = `Model Type: Gradient Boosting Regressor (Tuned)`;
+    } else if (model.type === "random_forest_tuned") {
+        typePara.textContent = `Model Type: Random Forest Regressor (Tuned)`;
+    } else {
+        typePara.textContent = `Model Type: Unknown`;
     }
     infoDiv.appendChild(typePara);
 
