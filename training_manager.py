@@ -116,8 +116,8 @@ class TrainingManager:
             model = LinearRegression()
         elif model_type == 'gradient_boosting' or 'gradient_boosting_tuned':
             model = GradientBoostingRegressor(random_state=42)
-        elif model_type == 'random_forest':
-            model = RandomForestRegressor(random_state=42) or 'random_forest_tuned'
+        elif model_type == 'random_forest' or 'random_forest_tuned':
+            model = RandomForestRegressor(random_state=42)
         else:
             raise ValueError("Unsupported model type")
 

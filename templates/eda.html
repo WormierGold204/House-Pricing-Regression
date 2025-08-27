@@ -52,6 +52,7 @@
                 <img src="{{ url_for('static', filename='eda/correlation_heatmap.png') }}" alt="Correlation Heatmap">
                 <p>Pearson correlation heatmap showing linear relationships between features.</p>
                 <p>Last column (or last row) show the correlation between the target variable and the other numerical features.</p>
+                <p>Plots of feature with highest linear correlation are shown in the next section.</p>
             </div>
 
             <div id="plots" class="eda-section">
@@ -59,6 +60,7 @@
                 <h3>Plots for numerical features</h3>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_living_area.png') }}" alt="Sale Price vs Living Area">
+                    <p>Exceptions to the linear behaviour are about house whose construction is not yet finished.</p>
                 </div>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_overall_quality.png') }}" alt="Sale Price vs Overall Quality">
@@ -68,6 +70,9 @@
                 </div>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_garage_cars.png') }}" alt="Sale Price vs Garage Cars">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_garage_area.png') }}" alt="Sale Price vs Garage Area">
                 </div>
                 <h3>Plots for categorical features</h3>
                 <div class="plot">

@@ -110,6 +110,16 @@ def plots(df):
     plots.append(path)
     plt.close()
 
+    # Scatterplot: SalePrice vs GarageArea
+    plt.figure(figsize=(10,6))
+    sns.scatterplot(x="GarageArea", y="SalePrice", data=df)
+    plt.title("SalePrice vs Area of Garage")
+    path = os.path.join("static/eda", "saleprice_vs_garage_area.png")
+    plt.savefig(path)
+    plots.append(path)
+    plt.close()
+
+
     # Categorical Features
     # Boxplot: SalePrice vs Neighborhood
     plt.figure(figsize=(12,8))
