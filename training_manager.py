@@ -19,6 +19,8 @@ class TrainingManager:
         self.dataset_manager = dataset_manager
 
         # Ensure the models.json file exists, creating it if necessary
+        if not os.path.exists("models"):
+            os.makedirs("models")
         if not os.path.exists("models/models.json"):
             with open("models/models.json", "w") as f:
                 json.dump([], f)

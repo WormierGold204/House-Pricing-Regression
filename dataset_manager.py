@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from eda import target_variable_distribution, correlation_heatmap, plots, dataset_statistics
+import os
 
 class DatasetManager:
     def __init__(self, path="data/dataset.csv"):
@@ -24,6 +25,10 @@ class DatasetManager:
 
         # Compute basic statistics of the dataset
         self.statistics = dataset_statistics(self.df)
+
+        # Create a directory for EDA images if it doesn't exist
+        if not os.path.exists("static/eda"):
+            os.makedirs("static/eda")
 
         # Generate analysis' images for EDA
         self.images_paths = {
