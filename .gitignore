@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
 .env
+models/models.json
 venv/
 *.pkl
 *.h5
+*.png

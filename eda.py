@@ -131,32 +131,52 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Barplot: SalePrice vs MSSubClass
+    # Boxplot: SalePrice vs ExterQual
     plt.figure(figsize=(10,6))
-    sns.barplot(x="MSSubClass", y="SalePrice", data=df)
-    plt.title("Average SalePrice by Building Class")
+    sns.boxplot(x="ExterQual", y="SalePrice", data=df)
+    plt.title("Average SalePrice by Exterior Quality")
     plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_building_class.png")
+    path = os.path.join("static/eda", "saleprice_vs_exterior_quality.png")
+    plt.savefig(path)
+    plots.append(path)
+    plt.close()
+
+    # Barplot: SalePrice vs BsmtQual
+    plt.figure(figsize=(10,6))
+    sns.barplot(x="BsmtQual", y="SalePrice", data=df)
+    plt.title("Average SalePrice by Basement Quality")
+    plt.xticks(rotation=45)
+    path = os.path.join("static/eda", "saleprice_vs_basement_quality.png")
+    plt.savefig(path)
+    plots.append(path)
+    plt.close()
+
+    # Boxplot: SalePrice vs KitchenQual
+    plt.figure(figsize=(10,6))
+    sns.boxplot(x="KitchenQual", y="SalePrice", data=df)
+    plt.title("Average SalePrice by Kitchen Quality")
+    plt.xticks(rotation=45)
+    path = os.path.join("static/eda", "saleprice_vs_kitchen_quality.png")
+    plt.savefig(path)
+    plots.append(path)
+    plt.close()
+
+    # Barplot: SalePrice vs SaleCondition
+    plt.figure(figsize=(10,6))
+    sns.barplot(x="SaleCondition", y="SalePrice", data=df)
+    plt.title("Average SalePrice by Sale Condition")
+    plt.xticks(rotation=45)
+    path = os.path.join("static/eda", "saleprice_vs_sale_condition.png")
     plt.savefig(path)
     plots.append(path)
     plt.close()
 
     # Boxplot: SalePrice vs HouseStyle
     plt.figure(figsize=(12,8))
-    sns.boxplot(x="OverallCond", y="SalePrice", data=df)
+    sns.boxplot(x="HouseStyle", y="SalePrice", data=df)
     plt.title("Average SalePrice by House Style")
     plt.xticks(rotation=45)
     path = os.path.join("static/eda", "saleprice_vs_house_style.png")
-    plt.savefig(path)
-    plots.append(path)
-    plt.close()
-
-    # Barplot: SalePrice vs RoofStyle
-    plt.figure(figsize=(15,6))
-    sns.barplot(x="Exterior1st", y="SalePrice", data=df)
-    plt.title("Average SalePrice by Roof Style")
-    plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_roof_style.png")
     plt.savefig(path)
     plots.append(path)
     plt.close()

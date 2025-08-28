@@ -45,11 +45,28 @@ document.addEventListener("DOMContentLoaded", function() {
     // Select high correlated features
     document.querySelector("#select-hc").addEventListener("click", function() {
         const highCorrelatedFeatures = [
-            "MSSubClass", "MSZoning", "LotFrontage", "LotArea", "LotConfig", "Neighborhood", "OverallQual",
-            "OverallCond", "YearBuilt", "RoofStyle", "Exterior1st", "MasVnrType", "MasVnrArea", "ExterQual",
-            "ExterCond", "BsmtCond", "BsmtExposure", "BsmtFinSF1", "BsmtFinSF2", "TotalBsmtSF", "HeatingQC",
-            "1stFlrSF", "2ndFlrSF", "GrLivArea", "FullBath", "GarageCars", "GarageArea", "WoodDeckSF",
-            "OpenPorchSF", "SaleCondition"
+            "OverallQual",
+            "GrLivArea",
+            "GarageCars",
+            "GarageArea",
+            "TotalBsmtSF",
+            "1stFlrSF",
+            "FullBath",
+            "TotRmsAbvGrd",
+            "YearBuilt",
+            "YearRemodAdd",
+            "Fireplaces",
+            "Neighborhood",
+            "ExterQual",
+            "KitchenQual",
+            "BsmtQual",
+            "GarageFinish",
+            "SaleCondition",
+            "MSZoning",
+            "Foundation",
+            "CentralAir",
+            "HouseStyle",
+            "GarageType"
         ];
         document.querySelectorAll("input[name=features]").forEach(cb => {
             cb.checked = highCorrelatedFeatures.includes(cb.value);

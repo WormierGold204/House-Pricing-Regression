@@ -18,6 +18,12 @@ class TrainingManager:
     def __init__(self, dataset_manager):
         self.dataset_manager = dataset_manager
 
+        # Ensure the models.json file exists, creating it if necessary
+        if not os.path.exists("models/models.json"):
+            with open("models/models.json", "w") as f:
+                json.dump([], f)
+
+
     def get_models(self):
         """Return the list of trained models."""
         with open("models/models.json", "r") as f:
@@ -25,8 +31,6 @@ class TrainingManager:
 
     def save_model(self, model, model_name):
         """Save the trained model to disk."""
-        if not os.path.exists('models'):
-            os.makedirs('models')
 
         # Save the model
         joblib.dump(model, os.path.join('models', f"{model_name}.pkl"))
@@ -41,7 +45,9 @@ class TrainingManager:
         return joblib.load(model_path)
 
     def update_metadata(self, metadata, delete = False):
-        """Update the models.json file with new model metadata."""
+        """Update the models.json file with new model metadata.
+        If delete is True, the dumped metadata does not contain the model to be deleted;
+        otherwise, it contains the new model to be added."""
         # Load existing metadata to avoid overwriting
         models = self.get_models()
 
@@ -184,27 +190,6 @@ class TrainingManager:
 
         return {"model": processed_model, "rmse": rmse, "r2": r2}
 
-    def train_linear_regression(self, X_train, y_train):
-        """Train a Linear Regression model."""
-        # Initialize and fit the Linear Regression model
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-        return model
-
-    def train_random_forest(self, X_train, y_train):
-        """Train a Random Forest Regressor model."""
-        # Initialize and fit the Random Forest Regressor model
-        model = RandomForestRegressor(random_state=42)
-        model.fit(X_train, y_train)
-        return model
-
-    def train_gradient_boosting(self, X_train, y_train):
-        """Train a Gradient Boosting Regressor model."""
-        # Initialize and fit the Gradient Boosting Regressor model
-        model = GradientBoostingRegressor(random_state=42)
-        model.fit(X_train, y_train)
-        return model
-
     def predict(self, model_name, features):
         """Make a prediction using a trained model."""
         # Load the model
@@ -216,7 +201,7 @@ class TrainingManager:
         # Load metadata of current model
         model_meta = next((m for m in self.get_models() if m["name"] == model_name), None)
 
-        # Fill non compiled features' box with NaN value
+        # Fill non compiled features' boxes with NaN value
         expected_features = model_meta["features"]
         for f in expected_features:
             if f not in X.columns:

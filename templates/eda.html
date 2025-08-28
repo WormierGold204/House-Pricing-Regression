@@ -52,21 +52,18 @@
                 <img src="{{ url_for('static', filename='eda/correlation_heatmap.png') }}" alt="Correlation Heatmap">
                 <p>Pearson correlation heatmap showing linear relationships between features.</p>
                 <p>Last column (or last row) show the correlation between the target variable and the other numerical features.</p>
-                <p>Plots of feature with highest linear correlation are shown in the next section.</p>
+                <p>Plots of features with highest linear correlation are shown in the next section.</p>
             </div>
 
             <div id="plots" class="eda-section">
                 <h2>Plots</h2>
                 <h3>Plots for numerical features</h3>
-                <div class="plot">
-                    <img src="{{ url_for('static', filename='eda/saleprice_vs_living_area.png') }}" alt="Sale Price vs Living Area">
-                    <p>Exceptions to the linear behaviour are about house whose construction is not yet finished.</p>
-                </div>
+                <p>Features' plots are shown in decreasing order of correlation with SalePrice</p>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_overall_quality.png') }}" alt="Sale Price vs Overall Quality">
                 </div>
                 <div class="plot">
-                    <img src="{{ url_for('static', filename='eda/saleprice_vs_total_basement_area.png') }}" alt="Sale Price vs Total Basament Area">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_living_area.png') }}" alt="Sale Price vs Living Area">
                 </div>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_garage_cars.png') }}" alt="Sale Price vs Garage Cars">
@@ -74,19 +71,57 @@
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_garage_area.png') }}" alt="Sale Price vs Garage Area">
                 </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_total_basement_area.png') }}" alt="Sale Price vs Total Basament Area">
+                </div>
+                <p>Other numerical features with a high correlation with SalePrice are:</p>
+                <ul>
+                    <li>1st Floor Area</li>
+                    <li>Full Bath</li>
+                    <li>TotRms AbvGrd</li>
+                    <li>Year Built</li>
+                    <li>Year Remod/Add</li>
+                    <li>Fireplaces</li>
+                </ul>
                 <h3>Plots for categorical features</h3>
+                <p>Features' plots are shown in decreasing order of correlation with SalePrice</p>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_neighborhood.png') }}" alt="Sale Price vs Neighborhood">
                 </div>
                 <div class="plot">
-                    <img src="{{ url_for('static', filename='eda/saleprice_vs_building_class.png') }}" alt="Sale Price vs Building Class">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_exterior_quality.png') }}" alt="Sale Price vs Exterior Quality">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_kitchen_quality.png') }}" alt="Sale Price vs Kitchen Quality">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_basement_quality.png') }}" alt="Sale Price vs Basement Quality">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_sale_condition.png') }}" alt="Sale Price vs Sale Condition">
                 </div>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_house_style.png') }}" alt="Sale Price vs House Style">
                 </div>
-                <div class="plot">
-                    <img src="{{ url_for('static', filename='eda/saleprice_vs_roof_style.png') }}" alt="Sale Price vs Roof Style">
-                </div>
+                <p>Other categorical features with a high correlation with SalePrice are:</p>
+                <ul>
+                    <li>MSZoning</li>
+                    <li>Garage Finish</li>
+                    <li>Garage Type</li>
+                    <li>Foundation</li>
+                    <li>Central Air</li>
+                </ul>
+            </div>
+            <div>
+                <h2>Considerations</h2>
+                <ul>
+                    <li>Quality matters more than size; in fact, features which express quality (Overall, Kitchen, Exter) have higher correlations.</li>
+                    <li>Neighborhood has a strong impact on price; as expected, the location is important on the price.</li>
+                    <li>House style also matters; houses with more than one story tend to have higher prices.</li>
+                    <li>Practical amenities (that is, used spaces), like Garage and Basament, tend to increase the price more than just sheer dimensions.</li>
+                    <li>Sale condition affects the price; houses sold under normal conditions tend to have higher prices.</li>
+                    <li>There are some outliers given by large, poor-quality homes or by special sales.</li>
+                </ul>
             </div>
         </div>
     </main>
