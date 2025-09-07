@@ -8,7 +8,7 @@ def dataset_statistics(df):
     Generate basic statistics of the dataset.
     
     Parameters:
-    df (pd.DataFrame): The DataFrame containing the data.
+    df (DataFrame): The DataFrame containing the data.
     
     Returns:
     dict: A dictionary containing the statistics.
@@ -37,7 +37,7 @@ def target_variable_distribution(df):
     plt.title(f'Distribution of SalePrice')
     plt.xlabel('SalePrice')
     plt.ylabel('count')
-    path = os.path.join("static/eda", "target_distribution.png")
+    path = "static/eda/target_distribution.png"
     plt.savefig(path)
     plt.close()
     return path
@@ -47,7 +47,7 @@ def correlation_heatmap(df):
     Plot the correlation heatmap of the DataFrame.
     
     Parameters:
-    df (pd.DataFrame): The DataFrame containing the data.
+    df (DataFrame): The DataFrame containing the data.
     
     Returns:
     str: The path to the saved image.
@@ -56,7 +56,7 @@ def correlation_heatmap(df):
     corr = df.corr(numeric_only=True)
     sns.heatmap(corr, cmap="coolwarm", center=0, annot=False)
     plt.title("Pearson Correlation Heatmap")
-    path = os.path.join("static/eda", "correlation_heatmap.png")
+    path = "static/eda/correlation_heatmap.png"
     plt.savefig(path)
     plt.close()
     return path
@@ -66,7 +66,7 @@ def plots(df):
     Generate EDA plots for the DataFrame.
     
     Parameters:
-    df (pd.DataFrame): The DataFrame containing the data.
+    df (DataFrame): The DataFrame containing the data.
     
     Returns:
     list: A list of paths to the generated plots.
@@ -78,7 +78,7 @@ def plots(df):
     plt.figure(figsize=(8,5))
     sns.scatterplot(x="GrLivArea", y="SalePrice", data=df)
     plt.title("SalePrice vs Living Area")
-    path = os.path.join("static/eda", "saleprice_vs_living_area.png")
+    path = "static/eda/saleprice_vs_living_area.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -87,7 +87,7 @@ def plots(df):
     plt.figure(figsize=(10,6))
     sns.boxplot(x="OverallQual", y="SalePrice", data=df)
     plt.title("SalePrice vs Overall Quality")
-    path = os.path.join("static/eda", "saleprice_vs_overall_quality.png")
+    path = "static/eda/saleprice_vs_overall_quality.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -96,7 +96,7 @@ def plots(df):
     plt.figure(figsize=(10,6))
     sns.scatterplot(x="TotalBsmtSF", y="SalePrice", data=df)
     plt.title("SalePrice vs Total Basement Area")
-    path = os.path.join("static/eda", "saleprice_vs_total_basement_area.png")
+    path = "static/eda/saleprice_vs_total_basement_area.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -105,7 +105,7 @@ def plots(df):
     plt.figure(figsize=(10,6))
     sns.barplot(x="GarageCars", y="SalePrice", data=df)
     plt.title("SalePrice vs Number of Garage Cars")
-    path = os.path.join("static/eda", "saleprice_vs_garage_cars.png")
+    path = "static/eda/saleprice_vs_garage_cars.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -114,7 +114,7 @@ def plots(df):
     plt.figure(figsize=(10,6))
     sns.scatterplot(x="GarageArea", y="SalePrice", data=df)
     plt.title("SalePrice vs Area of Garage")
-    path = os.path.join("static/eda", "saleprice_vs_garage_area.png")
+    path = "static/eda/saleprice_vs_garage_area.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -126,7 +126,7 @@ def plots(df):
     sns.boxplot(x="Neighborhood", y="SalePrice", data=df)
     plt.title("Average SalePrice by Neighborhood")
     plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_neighborhood.png")
+    path = "static/eda/saleprice_vs_neighborhood.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -136,7 +136,7 @@ def plots(df):
     sns.boxplot(x="ExterQual", y="SalePrice", data=df)
     plt.title("Average SalePrice by Exterior Quality")
     plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_exterior_quality.png")
+    path = "static/eda/saleprice_vs_exterior_quality.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -146,7 +146,7 @@ def plots(df):
     sns.barplot(x="BsmtQual", y="SalePrice", data=df)
     plt.title("Average SalePrice by Basement Quality")
     plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_basement_quality.png")
+    path = "static/eda/saleprice_vs_basement_quality.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -156,7 +156,7 @@ def plots(df):
     sns.boxplot(x="KitchenQual", y="SalePrice", data=df)
     plt.title("Average SalePrice by Kitchen Quality")
     plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_kitchen_quality.png")
+    path = "static/eda/saleprice_vs_kitchen_quality.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -166,7 +166,7 @@ def plots(df):
     sns.barplot(x="SaleCondition", y="SalePrice", data=df)
     plt.title("Average SalePrice by Sale Condition")
     plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_sale_condition.png")
+    path = "static/eda/saleprice_vs_sale_condition.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()
@@ -176,7 +176,7 @@ def plots(df):
     sns.boxplot(x="HouseStyle", y="SalePrice", data=df)
     plt.title("Average SalePrice by House Style")
     plt.xticks(rotation=45)
-    path = os.path.join("static/eda", "saleprice_vs_house_style.png")
+    path = "static/eda/saleprice_vs_house_style.png"
     plt.savefig(path)
     plots.append(path)
     plt.close()

@@ -41,10 +41,16 @@ class DatasetManager:
         self.df = df_copy
 
     def get_features(self):
-        """Return all features except target column"""
+        """Return all features except target column.
+        
+        Returns:
+        list: A list of feature column names."""
         # Target column is assumed to be the last one
         return list(self.df.columns[:-1])
 
     def get_target(self):
-        """Return the target column name"""
+        """Return the target column name.
+        
+        Returns:
+        str: The target column name."""
         return self.df.columns[-1]

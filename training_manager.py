@@ -27,19 +27,34 @@ class TrainingManager:
 
 
     def get_models(self):
-        """Return the list of trained models."""
+        """Return the list of trained models.
+        
+        Returns:
+        list: A list of dictionaries containing model metadata."""
         with open("models/models.json", "r") as f:
             return json.load(f)
 
     def save_model(self, model, model_name):
-        """Save the trained model to disk."""
+        """Save the trained model to disk.
+        
+        Parameters:
+        model: The trained model to be saved.
+        model_name (str): The name to save the model under.
+        """
 
         # Save the model
-        joblib.dump(model, os.path.join('models', f"{model_name}.pkl"))
+        joblib.dump(model, f"models/{model_name}.pkl")
 
     def load_model(self, model_name):
-        """Load a trained model from disk."""
-        model_path = os.path.join('models', f"{model_name}.pkl")
+        """Load a trained model from disk.
+        
+        Parameters:
+        model_name (str): The name of the model to be loaded.
+        
+        Returns:
+        The loaded model."""
+
+        model_path = f"models/{model_name}.pkl"
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Model {model_name} not found")
 
@@ -49,7 +64,12 @@ class TrainingManager:
     def update_metadata(self, metadata, delete = False):
         """Update the models.json file with new model metadata.
         If delete is True, the dumped metadata does not contain the model to be deleted;
-        otherwise, it contains the new model to be added."""
+        otherwise, it contains the new model to be added.
+        
+        Parameters:
+        metadata (dict): The metadata of the model to be added or the list of models to keep.
+        delete (bool): Whether to delete a model (True) or add/update a model"""
+
         # Load existing metadata to avoid overwriting
         models = self.get_models()
 
@@ -67,6 +87,11 @@ class TrainingManager:
             json.dump(models, f, indent=4)
 
     def delete_model(self, model_name):
+        """Delete a trained model and its metadata.
+        
+        Parameters:
+        model_name (str): The name of the model to be deleted."""
+
         # Get all models from the json file
         models = self.get_models()
 
@@ -86,6 +111,16 @@ class TrainingManager:
         self.update_metadata(models, True)
 
     def train_model(self, model_type, model_name, selected_features):
+        """Train a model based on the selected type and features.
+        
+        Parameters:
+        model_type (str): The type of model to train (e.g., 'linear_regression', 'random_forest', etc.).
+        model_name (str): The name to save the trained model under.
+        selected_features (list): The list of features to use for training.
+        
+        Returns:
+        dict: A dictionary containing the trained model and its evaluation metrics (RMSE, R^2)."""
+        
         # Obtain preprocessed data and keep only selected features
         if not selected_features:
             raise ValueError("No features selected for training")
@@ -96,8 +131,6 @@ class TrainingManager:
         # Split Categorical and Numeric Features
         numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
         categorical_features = X.select_dtypes(include=['object']).columns
-
-        # Preprocessing to add in the pipeline
 
         # Preprocessing to handle missing values and scale numeric features
         numeric_transformer = Pipeline(steps=[
@@ -186,14 +219,22 @@ class TrainingManager:
             "features": selected_features,
             "rmse": rmse,
             "r2": r2,
-            "file": os.path.join('models', f"{model_name}.pkl")
+            "file": f"models/{model_name}.pkl"
         }
         self.update_metadata(metadata)
 
         return {"model": processed_model, "rmse": rmse, "r2": r2}
 
     def predict(self, model_name, features):
-        """Make a prediction using a trained model."""
+        """Make a prediction using a trained model.
+        
+        Parameters:
+        model_name (str): The name of the model to use for prediction.
+        features (dict): A dictionary of feature values for prediction.
+        
+        Returns:
+        The prediction result.
+        """
         # Load the model
         model = self.load_model(model_name)
 

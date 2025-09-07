@@ -4,7 +4,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - .:/app   # hot reload your code
+      - .:/app   # reload the app on code changes
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
