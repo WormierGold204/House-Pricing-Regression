@@ -155,9 +155,9 @@ class TrainingManager:
         # Choose the model based on the user's choice
         if model_type == 'linear_regression':
             model = LinearRegression()
-        elif model_type == 'gradient_boosting' or 'gradient_boosting_tuned':
+        elif model_type in ['gradient_boosting', 'gradient_boosting_tuned']:
             model = GradientBoostingRegressor(random_state=42)
-        elif model_type == 'random_forest' or 'random_forest_tuned':
+        elif model_type in ['random_forest', 'random_forest_tuned']:
             model = RandomForestRegressor(random_state=42)
         else:
             raise ValueError("Unsupported model type")
@@ -200,7 +200,7 @@ class TrainingManager:
         )
 
         # Train the model based on the pipeline
-        processed_model.fit(X, y)
+        processed_model.fit(X_train, y_train)
 
         # Save the model
         self.save_model(processed_model, model_name)
@@ -248,7 +248,7 @@ class TrainingManager:
         expected_features = model_meta["features"]
         for f in expected_features:
             if f not in X.columns:
-                X[f] = X.NA
+                X[f] = pd.NA
 
         # Take just the first element of the prediction, that is the expected prediction
         prediction = model.predict(X)[0]
