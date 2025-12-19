@@ -33,9 +33,16 @@
         </div>
 
         <h2>Make a Prediction</h2>
-        <div id="nan-option">
-            <input type="checkbox" id="accept-nan">
-            <label for="accept-nan">Check this box to assume non-filled boxes to have a value of the median for numerical features and most frequent for categorical features</label>
+        <div id="text">
+            <p>Fill all boxes to get the predicted value.</p>
+            <p>If your house is not provided with a pool, a garage, an alley, a fence, a fireplace, a basament, a masonry or similar
+                type 'None' in the related following features:</p>
+            <p>'PoolQC', 'MiscFeature', 'Alley', 'Fence', 'FireplaceQu',
+            'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond',
+            'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2',
+            'MasVnrType'</p>
+            <p>or '0' here: 'GarageYrBlt', 'MasVnrArea'.</p>
+            
         </div>
         
         <div id="prediction-section">

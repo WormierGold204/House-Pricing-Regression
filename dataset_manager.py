@@ -8,37 +8,43 @@ class DatasetManager:
         # Load dataset
         self.df = pd.read_csv(path)
 
-        # Save a copy of the original DataFrame without preprocessing
-        df_copy = self.df.copy()
-
-        # Preprocess dataset, readying it for EDA
-        # Separate categorical and numerical
-        numeric_features = self.df.select_dtypes(include=['int64', 'float64']).columns
-        categorical_features = self.df.select_dtypes(include=['object']).columns
-
-        # Fill numeric NaN with median, categorical with the most frequent value
-        imputer_num = SimpleImputer(strategy="median")
-        imputer_cat = SimpleImputer(strategy="most_frequent")
-
-        self.df[numeric_features] = imputer_num.fit_transform(self.df[numeric_features])
-        self.df[categorical_features] = imputer_cat.fit_transform(self.df[categorical_features])
-
-        # Compute basic statistics of the dataset
+        # Obtain general statistics and missing values statistics on dataset
         self.statistics = dataset_statistics(self.df)
 
-        # Create a directory for EDA images if it doesn't exist
-        if not os.path.exists("static/eda"):
-            os.makedirs("static/eda")
+        # Create a copy of dataset to apply preprocessing
+        self.df_copy = self.df.copy()
 
-        # Generate analysis' images for EDA
+        # Handling of NA values
+        # Drop Electrical row (just one sample)
+        self.df_copy = self.df_copy.dropna(subset=['Electrical'])
+
+        # NA values here show lack of feature: fill with string None (categorical) or 0 (numeric) to represent absence
+        categorical_absence = [
+            'PoolQC', 'MiscFeature', 'Alley', 'Fence', 'FireplaceQu',
+            'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond',
+            'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2',
+            'MasVnrType'
+        ]
+        numeric_absence = [
+            'GarageYrBlt', 'MasVnrArea'
+        ]
+        self.df_copy[categorical_absence] = self.df_copy[categorical_absence].fillna('None')
+        self.df_copy[numeric_absence] = self.df_copy[numeric_absence].fillna(0)
+
+        # LotFrontage NA values mean lack of information: fill with median value
+        self.df_copy['LotFrontage'] = self.df_copy['LotFrontage'].fillna(self.df_copy['LotFrontage'].median())
+
+        # Create new derived features to enrich SalePrice's correlations
+        self.df_copy['TotalSF'] = self.df_copy['TotalBsmtSF'] + self.df_copy['1stFlrSF'] + self.df_copy['2ndFlrSF'] # Total House Square Feet
+        self.df_copy['HouseAge'] = self.df_copy['YrSold'] - self.df_copy['YearBuilt']   # House Age when the house was sold
+        self.df_copy['TotalBath'] = self.df_copy['BsmtFullBath'] + 0.5*self.df_copy['BsmtHalfBath'] + self.df_copy['FullBath'] + 0.5*self.df_copy['HalfBath']
+
+        # Generate images for EDA
         self.images_paths = {
-            "target_distribution": target_variable_distribution(self.df),
-            "correlation_heatmap": correlation_heatmap(self.df),
-            "plots": plots(self.df)
+            "target_distribution": target_variable_distribution(self.df_copy),
+            "correlation_heatmap": correlation_heatmap(self.df_copy),
+            "plots": plots(self.df_copy)
         }
-
-        # Restore the original DataFrame for the pipeline
-        self.df = df_copy
 
     def get_features(self):
         """Return all features except target column.
@@ -47,10 +53,6 @@ class DatasetManager:
         list: A list of feature column names."""
         # Target column is assumed to be the last one
         return list(self.df.columns[:-1])
-
+    
     def get_target(self):
-        """Return the target column name.
-        
-        Returns:
-        str: The target column name."""
         return self.df.columns[-1]

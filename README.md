@@ -23,14 +23,14 @@ A web application to train models and predict the price of houses; based on the 
 ## Requirements
 
 - Docker
-- Docker Compose
+- Docker Compose (latest version)
 
 ## Running the App using Docker Compose
 
 1. Build and start the container:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 2. Open your Browser:
@@ -41,5 +41,5 @@ http://localhost:5000
 
 Press Ctrl+C in the terminal or run:
 ```bash
-docker-compose down
+docker compose down
 ```

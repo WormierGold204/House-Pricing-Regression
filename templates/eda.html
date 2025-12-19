@@ -28,7 +28,7 @@
         </div>
         <div class="info-container">
             <div id="summary" class="eda-section">
-                <h2>Data Summary</h2>
+                <h2>Data Statistics</h2>
                 <ul id="data-summary">
                     <li class="list-group-item">Number of Rows: <b>{{ statistics.n_rows }}</b></li>
                     <li class="list-group-item">Number of Columns: <b>{{ statistics.n_cols }}</b></li>
@@ -36,9 +36,23 @@
                 </ul>
 
                 <h3 class="mt-4">Descriptive Statistics</h3>
-                <div id="table-section">
+                <div id="table-section1">
                     {{ statistics.describe|safe }}
                 </div>
+
+                <h3 class="mt-4">Missing Values</h3>
+                <div id="table-section2">
+                    {{ statistics.missing|safe }}
+                </div>
+                <ul>
+                    <li>Most of these features are categorical, with the only expections of LotFrontage, MasVnrArea and GarageYrBlt.</li>
+                    <li>From documentation we can see how most of NA values mean absence of feature (and not missing information).</li>
+                    <li>Exceptions are LotFrontage (every house surely have one) and Electrical (just in one sample).</li>
+                    <li>We can fill LotFrontage values with median value of the numeric feature and drop the Electrical sample to address the situation.</li>
+                    <li>Also, we can fill other NA values with 'None' for categorical features and 0 for numeric features.</li>
+                    <li>From the percentages we can observe how most houses don't have pools, alleys, fences or other amenities.</li>
+                    <li>On the contrary, most houses have a garage and a basement.</li>
+                </ul>
             </div>
 
             <div id="target" class="eda-section">
@@ -51,19 +65,28 @@
                 <h2>Correlations</h2>
                 <img src="{{ url_for('static', filename='eda/correlation_heatmap.png') }}" alt="Correlation Heatmap">
                 <p>Pearson correlation heatmap showing linear relationships between features.</p>
-                <p>Last column (or last row) show the correlation between the target variable and the other numerical features.</p>
+                <p>SalePrice column (or row) shows the correlation between the target variable and the other numerical features.</p>
                 <p>Plots of features with highest linear correlation are shown in the next section.</p>
             </div>
 
             <div id="plots" class="eda-section">
                 <h2>Plots</h2>
                 <h3>Plots for numerical features</h3>
-                <p>Features' plots are shown in decreasing order of correlation with SalePrice</p>
+                <p>Features' plots are shown in decreasing order of correlation with SalePrice.</p>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_overall_quality.png') }}" alt="Sale Price vs Overall Quality">
                 </div>
                 <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_totalsf.png') }}" alt="Sale Price vs Total Square Feet">
+                </div>
+                <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_living_area.png') }}" alt="Sale Price vs Living Area">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_house_age.png') }}" alt="Sale Price vs House Age">
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='eda/saleprice_vs_total_bath.png') }}" alt="Sale Price vs Total Number of Bath">
                 </div>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_garage_cars.png') }}" alt="Sale Price vs Garage Cars">
@@ -74,6 +97,7 @@
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_total_basement_area.png') }}" alt="Sale Price vs Total Basament Area">
                 </div>
+
                 <p>Other numerical features with a high correlation with SalePrice are:</p>
                 <ul>
                     <li>1st Floor Area</li>
@@ -84,7 +108,7 @@
                     <li>Fireplaces</li>
                 </ul>
                 <h3>Plots for categorical features</h3>
-                <p>Features' plots are shown in decreasing order of correlation with SalePrice</p>
+                <p>Features' plots are shown in decreasing order of correlation with SalePrice.</p>
                 <div class="plot">
                     <img src="{{ url_for('static', filename='eda/saleprice_vs_neighborhood.png') }}" alt="Sale Price vs Neighborhood">
                 </div>
@@ -115,13 +139,18 @@
             <div>
                 <h2>Considerations</h2>
                 <ul>
-                    <li>Quality matters more than size; in fact, features which express quality (Overall, Kitchen, Exter) have higher correlations.</li>
-                    <li>Neighborhood has a strong impact on price; as expected, the location is important on the price.</li>
-                    <li>House style also matters; houses with more than one story tend to have higher prices.</li>
-                    <li>Practical amenities (that is, used spaces), like Garage and Basement, tend to increase the price more than just sheer dimensions.</li>
-                    <li>Sale condition affects the price; houses sold under normal conditions tend to have higher prices.</li>
-                    <li>There are some outliers given by large, poor-quality homes or by special sales.</li>
-                </ul>
+                    <li>Structures like pool, fence or similar (although rare) tend to increase 
+                        the price more than basic structures like garage or basement.</li>
+                    <li>Quality is a bit more important than size: although dimensions are, of course, 
+                        a relevant parameter to increase the price, the quality of amenities and 
+                        the general quality has a slightly stronger impact on it.</li>
+                    <li>Neighborhood is a strong indicator (but not absolute) of whether a house 
+                        will have a high price or not (as expected).</li>
+                    <li>There are some special sale conditions that pose themselves as exceptions; 
+                        for example, big houses sold still unfinished have a low price compared to their sheer dimensions. 
+                        Houses sold under normal conditions tend to have higher prices.</li>
+                    <li>Other outliers are big yet poor-quality houses.</li>
+
             </div>
         </div>
     </main>

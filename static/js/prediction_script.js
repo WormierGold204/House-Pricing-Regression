@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const predictButton = document.querySelector('#predict-button');
 
     // Disable the predict button until all information needed for a prediction is provided
-    predictButton.disabled = true
+    predictButton.disabled = true;
     
     // Fetch list of models from the server
     models_list = await fetch('/models');
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             showBox(model);
 
             // Note that a radio button has been selected
-            radioSelected = true;
+            predictButton.disabled = false;
         });
     });
 
@@ -50,13 +50,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         let inputData = {};
         inputBoxes.forEach((box) => {
             let value = box.value.trim();
-
-            // If boxes are empty, send as null
-            if (value === "") {
-                inputData[box.name] = null;
-            } else {
-                inputData[box.name] = value;
-            }
+            inputData[box.name] = value;
         });
         
         // Send the data to the server for prediction
@@ -78,21 +72,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    // Add a listener to recheck the enabling of the button when the chekcbox status change
-    const acceptNanBox = document.querySelector("#accept-nan");
-    acceptNanBox.addEventListener("change", () => {
-        checkButton()
-    });
-
     // Clear the input box and info section on page load
     let inputDiv = document.querySelector('#prediction-form');
     inputDiv.innerHTML = '';
     let infoDiv = document.querySelector('#model-info');
     infoDiv.innerHTML = '';
 });
-
-// Variable to know if a radio button has been selected
-let radioSelected = false;
 
 // Function to show input box for the selected model
 function showBox(model) {
@@ -117,30 +102,10 @@ function showBox(model) {
         textInput.name = feature;
         textInput.id = `feature-${feature}`;
 
-        // Add event listener to check if the button can be enabled
-        textInput.addEventListener('input', checkButton);
-
         featureDiv.appendChild(textInput);
 
         inputDiv.appendChild(featureDiv);
     });
-}
-
-// Function to check if the predict button can be enabled
-function checkButton() {
-    const predictButton = document.querySelector('#predict-button');
-    const acceptNanBox = document.querySelector("#accept-nan");
-    const allInputs = document.querySelectorAll('#prediction-form input[type="text"]');
-    
-    // Check if all text input boxes are filled
-    const allFilled = Array.from(allInputs).every(input => input.value.trim() !== "");
-    
-    // Enable the predict button if a radio button is selected and all input boxes are filled or the accept NaN checkbox is checked
-    if (radioSelected && (allFilled || acceptNanBox.checked)) {
-        predictButton.disabled = false;
-    } else {
-        predictButton.disabled = true;
-    }
 }
 
 // Function to show information about the selected model
@@ -164,10 +129,8 @@ function showInfo(model) {
         typePara.textContent = `Model Type: Gradient Boosting Regressor`;
     } else if (model.type === "random_forest") {
         typePara.textContent = `Model Type: Random Forest Regressor`;
-    } else if (model.type === "gradient_boosting_tuned") {
-        typePara.textContent = `Model Type: Gradient Boosting Regressor (Tuned)`;
-    } else if (model.type === "random_forest_tuned") {
-        typePara.textContent = `Model Type: Random Forest Regressor (Tuned)`;
+    } else if (model.type === "gradient_descent") {
+        typePara.textContent = `Model Type: Gradient Descent Regressor`
     } else {
         typePara.textContent = `Model Type: Unknown`;
     }

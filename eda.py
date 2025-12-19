@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -13,12 +12,23 @@ def dataset_statistics(df):
     Returns:
     dict: A dictionary containing the statistics.
     """
+
+    missing = (
+        df.isna()
+        .sum()
+        .to_frame(name='MissingCount')
+        .assign(MissingPercent=lambda x: x['MissingCount'] / len(df))
+        .query('MissingCount > 0')
+        .sort_values('MissingPercent', ascending=False)
+    )
+
     stats = {
         "n_rows": df.shape[0],
         "n_cols": df.shape[1],
-        "target": df.columns[-1],  # Last column is assumed to be the target variable
+        "target": df.columns[-1],
         "columns": df.columns.tolist(),
-        "describe": df.describe().to_html(classes="table table-striped table-sm")
+        "describe": df.describe().to_html(classes="table table-striped table-sm"),
+        "missing": missing.to_html(classes="table table-striped table-sm")
     }
     return stats
 
@@ -74,7 +84,7 @@ def plots(df):
     plots = []
 
     # Numerical Features
-    # Scatter plot: SalePrice vs GrLivArea
+    # GrLivArea
     plt.figure(figsize=(8,5))
     sns.scatterplot(x="GrLivArea", y="SalePrice", data=df)
     plt.title("SalePrice vs Living Area")
@@ -83,7 +93,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Boxplot: SalePrice vs OverallQual
+    # OverallQual
     plt.figure(figsize=(10,6))
     sns.boxplot(x="OverallQual", y="SalePrice", data=df)
     plt.title("SalePrice vs Overall Quality")
@@ -92,7 +102,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Scatter: SalePrice vs TotalBsmtSF
+    # TotalBsmtSF
     plt.figure(figsize=(10,6))
     sns.scatterplot(x="TotalBsmtSF", y="SalePrice", data=df)
     plt.title("SalePrice vs Total Basement Area")
@@ -101,7 +111,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Barplot: SalePrice vs GarageCars
+    # GarageCars
     plt.figure(figsize=(10,6))
     sns.barplot(x="GarageCars", y="SalePrice", data=df)
     plt.title("SalePrice vs Number of Garage Cars")
@@ -110,7 +120,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Scatterplot: SalePrice vs GarageArea
+    # GarageArea
     plt.figure(figsize=(10,6))
     sns.scatterplot(x="GarageArea", y="SalePrice", data=df)
     plt.title("SalePrice vs Area of Garage")
@@ -119,9 +129,39 @@ def plots(df):
     plots.append(path)
     plt.close()
 
+    # Derived features
+    # TotalSF
+    plt.figure(figsize=(12,8))
+    sns.scatterplot(x="TotalSF", y="SalePrice", data=df)
+    plt.title("Average SalePrice by Total Square Feet")
+    plt.xticks(rotation=45)
+    path = "static/eda/saleprice_vs_totalsf.png"
+    plt.savefig(path)
+    plots.append(path)
+    plt.close()
+
+    # HouseAge
+    plt.figure(figsize=(12,8))
+    sns.scatterplot(x="HouseAge", y="SalePrice", data=df)
+    plt.title("Average SalePrice by House Age")
+    plt.xticks(rotation=45)
+    path = "static/eda/saleprice_vs_house_age.png"
+    plt.savefig(path)
+    plots.append(path)
+    plt.close()
+
+    # TotalBath
+    plt.figure(figsize=(12,8))
+    sns.barplot(x="TotalBath", y="SalePrice", data=df)
+    plt.title("Average SalePrice by Total Number of Bath")
+    plt.xticks(rotation=45)
+    path = "static/eda/saleprice_vs_total_bath.png"
+    plt.savefig(path)
+    plots.append(path)
+    plt.close()
 
     # Categorical Features
-    # Boxplot: SalePrice vs Neighborhood
+    # Neighborhood
     plt.figure(figsize=(12,8))
     sns.boxplot(x="Neighborhood", y="SalePrice", data=df)
     plt.title("Average SalePrice by Neighborhood")
@@ -131,7 +171,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Boxplot: SalePrice vs ExterQual
+    # ExterQual
     plt.figure(figsize=(10,6))
     sns.boxplot(x="ExterQual", y="SalePrice", data=df)
     plt.title("Average SalePrice by Exterior Quality")
@@ -141,7 +181,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Barplot: SalePrice vs BsmtQual
+    # BsmtQual
     plt.figure(figsize=(10,6))
     sns.barplot(x="BsmtQual", y="SalePrice", data=df)
     plt.title("Average SalePrice by Basement Quality")
@@ -151,7 +191,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Boxplot: SalePrice vs KitchenQual
+    # KitchenQual
     plt.figure(figsize=(10,6))
     sns.boxplot(x="KitchenQual", y="SalePrice", data=df)
     plt.title("Average SalePrice by Kitchen Quality")
@@ -161,7 +201,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Barplot: SalePrice vs SaleCondition
+    # SaleCondition
     plt.figure(figsize=(10,6))
     sns.barplot(x="SaleCondition", y="SalePrice", data=df)
     plt.title("Average SalePrice by Sale Condition")
@@ -171,7 +211,7 @@ def plots(df):
     plots.append(path)
     plt.close()
 
-    # Boxplot: SalePrice vs HouseStyle
+    # HouseStyle
     plt.figure(figsize=(12,8))
     sns.boxplot(x="HouseStyle", y="SalePrice", data=df)
     plt.title("Average SalePrice by House Style")
@@ -180,5 +220,5 @@ def plots(df):
     plt.savefig(path)
     plots.append(path)
     plt.close()
-    
+
     return plots

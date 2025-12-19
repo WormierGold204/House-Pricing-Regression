@@ -2,10 +2,10 @@ services:
   web:
     build: .
     ports:
-      - "5000:5000"
+      - "5000-5100:5000"
     volumes:
       - .:/app   # reload the app on code changes
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
-    command: flask run --host=0.0.0.0 --port=5000 --reload
+    command: python app.py

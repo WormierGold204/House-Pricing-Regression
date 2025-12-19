@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from dataset_manager import DatasetManager
 from training_manager import TrainingManager
-import json, os
 
 app = Flask(__name__)
 dataset = DatasetManager()
@@ -82,8 +81,15 @@ def predict():
     features = data.get("features", {})
 
     # Validate the input
-    if not model_name or not features:
-        return jsonify({"error": "Model name and features are required"}), 400
+    if not model_name:
+        return jsonify({"error": "Model name required."}), 400
+    
+    # Check if any user input is ""
+    empty_features = [f for f, v in features.items() if v == ""]
+
+    # If so, return an error
+    if empty_features:
+        return jsonify({"error": "All features must have a non-empty value.",}), 400
 
     # Perform prediction using the selected model
     try:
@@ -93,4 +99,4 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host = "0.0.0.0", port = 5000, debug = True)

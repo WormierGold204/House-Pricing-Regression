@@ -1,5 +1,5 @@
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, SGDRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.compose import ColumnTransformer
@@ -7,7 +7,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import GridSearchCV
 import numpy as np
 import pandas as pd
 import joblib
@@ -18,7 +17,7 @@ class TrainingManager:
     def __init__(self, dataset_manager):
         self.dataset_manager = dataset_manager
 
-        # Ensure the models.json file exists, creating it if necessary
+        # Check if the models.json file exists; if not, create it
         if not os.path.exists("models"):
             os.makedirs("models")
         if not os.path.exists("models/models.json"):
@@ -125,79 +124,73 @@ class TrainingManager:
         if not selected_features:
             raise ValueError("No features selected for training")
 
+        # Take just user selected features
         X = self.dataset_manager.df[selected_features]
         y = self.dataset_manager.df[self.dataset_manager.get_target()]
 
-        # Split Categorical and Numeric Features
-        numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
-        categorical_features = X.select_dtypes(include=['object']).columns
-
-        # Preprocessing to handle missing values and scale numeric features
-        numeric_transformer = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='median')),
-            ('scaler', StandardScaler())
-        ])
-
-        # Preprocessing to handle missing values and encode categorical features
-        categorical_transformer = Pipeline(steps=[
-            ('imputer', SimpleImputer(strategy='most_frequent')),
-            ('encoder', OneHotEncoder(handle_unknown='ignore'))
-        ])
-
-        # Create a preprocessor that applies the transformations to the respective features
-        preprocessor = ColumnTransformer(
-            transformers=[
-                ('num', numeric_transformer, numeric_features),
-                ('cat', categorical_transformer, categorical_features)
-            ]
+        # Split the data into training and testing sets (80%-20%)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size = 0.2, random_state = 42
         )
 
+        # Split categorical and numeric features so to operate different actions on each category
+        numeric_features = X_train.select_dtypes(include = ['int64', 'float64']).columns.tolist()
+        categorical_features = X_train.select_dtypes(include = ['object']).columns.tolist()
+
+        # Split LotFrontage numeric column (if user selected it) in order to apply specific NA filling
+        lot_frontage_feature = ['LotFrontage'] if 'LotFrontage' in numeric_features else []
+
+        # Remove LotFrontage (if user selected it) from other features list
+        numeric_features = [f for f in numeric_features if f not in lot_frontage_feature]
+
+        # Preprocessing for numeric features (no LotFrontage)
+        numeric_pipeline_nlf = Pipeline([
+            ('imputer', SimpleImputer(strategy = 'constant', fill_value = 0))  # needed for MasVnrArea and GarageYrBlt feature
+        ])
+
+        # Preprocessing for LotFrontage numeric feature
+        numeric_pipeline_lf = Pipeline([
+            ('imputer', SimpleImputer(strategy = 'median')) # needed for LotFrontage feature
+        ])
+
+        # In linear and gradient descent models apply scaling too
+        if model_type in ['linear_regression', 'gradient_descent']:
+            numeric_pipeline_nlf.steps.append(('scaler', StandardScaler()))
+            numeric_pipeline_lf.steps.append(('scaler', StandardScaler()))
+
+        # Preprocessing for categorical features
+        categorical_pipeline = Pipeline([
+            ('imputer', SimpleImputer(strategy = 'constant', fill_value = 'None')), # categorical features NAs mean lack of feature
+            ('onehot', OneHotEncoder(handle_unknown = 'ignore'))    # separate categorical features in more columns
+        ])
+
+        # Add preprocessings to pipeline (if user seleceted related features)
+        transformers = []
+        if numeric_features:
+            transformers.append(('num_zero', numeric_pipeline_nlf, numeric_features))
+        if lot_frontage_feature:
+            transformers.append(('num_median', numeric_pipeline_lf, lot_frontage_feature))
+        if categorical_features:
+            transformers.append(('cat', categorical_pipeline, categorical_features))
+
+        preprocessor = ColumnTransformer(transformers)
+
         # Choose the model based on the user's choice
-        if model_type == 'linear_regression':
+        if model_type in ['linear_regression']:
             model = LinearRegression()
-        elif model_type in ['gradient_boosting', 'gradient_boosting_tuned']:
+        elif model_type in ['gradient_boosting']:
             model = GradientBoostingRegressor(random_state=42)
-        elif model_type in ['random_forest', 'random_forest_tuned']:
+        elif model_type in ['random_forest']:
             model = RandomForestRegressor(random_state=42)
+        elif model_type in ['gradient_descent']:
+            model = SGDRegressor(max_iter=1000, tol=1e-3)
         else:
             raise ValueError("Unsupported model type")
 
-        # If the user selected a tuned model, set up GridSearchCV with hyperparameters for tuning
-        if model_type == 'gradient_boosting_tuned':
-            pipeline = Pipeline(steps=[('preprocessor', preprocessor),
-                                ('model', model)])
-
-            # Define the hyperparameter grid for tuning
-            param_grid = {
-                'model__n_estimators': [100, 300],
-                'model__learning_rate': [0.01, 0.1, 0.2],
-                'model__max_depth': [2, 5]
-            }
-
-            # Optimize the pipeline, searching for the best hyperparameters
-            processed_model = GridSearchCV(pipeline, param_grid, cv=3, n_jobs=-1, scoring='neg_mean_squared_error')
-        elif model_type == 'random_forest_tuned':
-            pipeline = Pipeline(steps=[('preprocessor', preprocessor),
-                                ('model', model)])
-
-            param_grid = {
-                'model__n_estimators': [100, 200],
-                'model__max_depth': [None, 10, 20],
-                'model__min_samples_split': [2, 5]
-            }
-
-            processed_model = GridSearchCV(pipeline, param_grid, cv=3, n_jobs=-1, scoring='neg_mean_squared_error')
-        else:
-            # Create a pipeline that first preprocesses the data and then applies the model (for tuned model this is done before the the tuning)
-            # This allows not to worry about the order of operations
-            # and ensures that the same preprocessing is applied during training and prediction
-            processed_model = Pipeline(steps=[('preprocessor', preprocessor),
-                                    ('model', model)])
-
-        # Split the data into training and testing sets
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
+        # Create a pipeline that first preprocesses the data and then applies the model (for tuned model this is done before the the tuning)
+        # This allows not to worry about the order of operations
+        # and ensures that the same preprocessing is applied during both training and prediction
+        processed_model = Pipeline(steps=[('preprocessor', preprocessor), ('model', model)])
 
         # Train the model based on the pipeline
         processed_model.fit(X_train, y_train)
@@ -235,21 +228,13 @@ class TrainingManager:
         Returns:
         The prediction result.
         """
+
         # Load the model
         model = self.load_model(model_name)
 
         # Features must be passed as a DataFrame with one row
         X = pd.DataFrame([features])
 
-        # Load metadata of current model
-        model_meta = next((m for m in self.get_models() if m["name"] == model_name), None)
-
-        # Fill non compiled features' boxes with NaN value
-        expected_features = model_meta["features"]
-        for f in expected_features:
-            if f not in X.columns:
-                X[f] = pd.NA
-
-        # Take just the first element of the prediction, that is the expected prediction
+        # Take the first element of the prediction, that is the expected prediction
         prediction = model.predict(X)[0]
         return prediction
