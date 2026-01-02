@@ -5,6 +5,11 @@ import os
 
 class DatasetManager:
     def __init__(self, path="data/dataset.csv"):
+
+        # Create a folder for eda images, if it does not already exist
+        if not os.path.exists("static/eda"):
+            os.makedirs("static/eda")
+        
         # Load dataset
         self.df = pd.read_csv(path)
 
