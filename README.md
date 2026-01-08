@@ -33,11 +33,16 @@ docker compose up --build
 
 2. Open your Browser:
 
-http://localhost:5000
+http://localhost:5XXX
+
+The application selects an available port starting from port 5000; you can see which port is being used by running the following command in another terminal:
+```bash
+docker ps
+```
 
 3. Stop the container:
 
-Press Ctrl+C in the terminal or run:
+Press Ctrl+C in the terminal or run (in another terminal):
 ```bash
 docker compose down
 ```
